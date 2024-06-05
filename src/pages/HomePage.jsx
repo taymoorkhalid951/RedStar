@@ -4,8 +4,8 @@ import TodoList from '../components/TodoList';
 
 const HomePage = () => {
   return (
-    <div>
-      <h1>Todo List</h1>
+    <div className='container'>
+      <h1>My Todo</h1>
       <TodoForm />
       <TodoList />
     </div>

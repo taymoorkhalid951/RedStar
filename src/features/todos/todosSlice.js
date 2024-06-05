@@ -10,7 +10,6 @@ const initialState = {
 
 export const fetchTodos = createAsyncThunk('todos/fetchTodos', async () => {
   try {
-
     const querySnapshot = await getDocs(collection(db, "todos"));
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (err) {
@@ -28,28 +27,28 @@ export const addTodo = createAsyncThunk('todos/addTodo', async (todo) => {
 });
 
 export const updateTodo = createAsyncThunk('todos/updateTodo', async (todo) => {
-  const docRef = doc(db, "todos", todo.id);
-  await updateDoc(docRef, { completed: todo.completed });
-  return todo;
+  try{
+    const docRef = doc(db, "todos", todo.id);
+    await updateDoc(docRef, { title:todo.title, completed: todo.completed });
+    return todo;
+  }catch(err){
+    console.error("Error updating document: ", err);
+  }
 });
 
 export const deleteTodo = createAsyncThunk('todos/deleteTodo', async (id) => {
-  const docRef = doc(db, "todos", id);
-  await deleteDoc(docRef);
-  return id;
+  try{
+    const docRef = doc(db, "todos", id);
+    await deleteDoc(docRef);
+    return id;
+  }catch(err){
+    console.error("Error deleting document: ", err);  
+  }
 });
 
 const todosSlice = createSlice({
   name: 'todos',
   initialState,
-  reducers: {
-    toggleTodo: (state, action) => {
-      const todo = state.todos.find(todo => todo.id === action.payload);
-      if (todo) {
-        todo.completed = !todo.completed;
-      }
-    }
-  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTodos.fulfilled, (state, action) => {
@@ -68,5 +67,4 @@ const todosSlice = createSlice({
   }
 });
 
-export const { toggleTodo } = todosSlice.actions;
 export default todosSlice.reducer;
